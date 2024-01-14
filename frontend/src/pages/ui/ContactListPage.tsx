@@ -31,7 +31,7 @@ export const ContactListPage: FC = () => {
       }
     }
 
-    setContacts(contactsMass)
+    setContacts(findContacts)
   }
 
   return (

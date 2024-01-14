@@ -2,21 +2,21 @@ import { Formik } from 'formik';
 import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
 import { FormikConfig } from 'formik/dist/types';
 import { useAppSelector } from 'src/hooks/use-app-selector';
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
 
 export interface FilterFormValues {
   name: string,
   groupId: string
 }
 
-export const FilterForm: FC<FormikConfig<Partial<FilterFormValues>>> = ({ onSubmit, initialValues = {} }) => {
+export const FilterForm: FC<FormikConfig<Partial<FilterFormValues>>> = ({ onSubmit, initialValues = { groupId: '', name: '' } }) => {
   const { groupContacts } = useAppSelector(state => state.contacts)
 
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit}>
       {
         ({ handleChange, handleSubmit }) => (
-          <Form onSubmit={handleSubmit} onChange={handleSubmit}>
+          <Form onSubmit={handleSubmit}>
             <Row xxl={4} className="g-4">
               <Col>
                 <InputGroup className="mb-3">
