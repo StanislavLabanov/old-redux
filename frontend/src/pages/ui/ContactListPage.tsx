@@ -1,20 +1,21 @@
+import { observer } from 'mobx-react-lite';
 import { FC, useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { ContactDto } from 'src/app/types/dto/ContactDto';
 import { ContactCard } from 'src/components/ContactCard';
 import { FilterForm, FilterFormValues } from 'src/components/FilterForm';
-import { useAppSelector } from 'src/hooks/use-app-selector';
+import { store } from 'src/store';
 
-export const ContactListPage: FC = () => {
-  const { contacts: contactsMass, groupContacts: groupContactsMass } = useAppSelector(state => state.contacts)
-  const [contacts, setContacts] = useState(contactsMass)
+export const ContactListPage: FC = observer(() => {
+  const { contacts, groupContacts } = store
+  const [contactsState, setContactsState] = useState(store.contacts)
 
   useEffect(() => {
-    setContacts(contactsMass)
-  }, [contactsMass])
+    setContactsState(contacts)
+  }, [contacts])
 
   const onSubmit = (fv: Partial<FilterFormValues>) => {
-    let findContacts: ContactDto[] = contactsMass
+    let findContacts: ContactDto[] = contacts
 
     if (fv.name) {
       const fvName = fv.name.toLowerCase();
@@ -22,16 +23,16 @@ export const ContactListPage: FC = () => {
     }
 
     if (fv.groupId) {
-      const groupContacts = groupContactsMass.find(({ id }) => id === fv.groupId);
+      const groupContact = groupContacts.find(({ id }) => id === fv.groupId);
 
-      if (groupContacts) {
+      if (groupContact) {
         findContacts = findContacts.filter(({ id }) => (
-          groupContacts.contactIds.includes(id)
+          groupContact.contactIds.includes(id)
         ))
       }
     }
 
-    setContacts(findContacts)
+    setContactsState(findContacts)
   }
 
   return (
@@ -42,7 +43,7 @@ export const ContactListPage: FC = () => {
       <Col>
         <Row xxl={4} className="g-4">
           {
-            contacts.map((contact) => (
+            contactsState.map((contact) => (
               <Col key={contact.id}>
                 <ContactCard contact={contact} withLink />
               </Col>
@@ -52,4 +53,4 @@ export const ContactListPage: FC = () => {
       </Col>
     </Row>
   )
-}
+})

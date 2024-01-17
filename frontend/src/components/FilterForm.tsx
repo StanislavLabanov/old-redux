@@ -1,16 +1,16 @@
 import { Formik } from 'formik';
 import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
 import { FormikConfig } from 'formik/dist/types';
-import { useAppSelector } from 'src/hooks/use-app-selector';
 import { FC } from 'react';
+import { store } from 'src/store';
+import { observer } from 'mobx-react-lite';
 
 export interface FilterFormValues {
   name: string,
   groupId: string
 }
 
-export const FilterForm: FC<FormikConfig<Partial<FilterFormValues>>> = ({ onSubmit, initialValues = { groupId: '', name: '' } }) => {
-  const { groupContacts } = useAppSelector(state => state.contacts)
+export const FilterForm: FC<FormikConfig<Partial<FilterFormValues>>> = observer(({ onSubmit, initialValues = { groupId: '', name: '' } }) => {
 
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit}>
@@ -38,7 +38,7 @@ export const FilterForm: FC<FormikConfig<Partial<FilterFormValues>>> = ({ onSubm
                 >
                   <option>Open this select menu</option>
                   {
-                    groupContacts.map(group => (
+                    store.groupContacts.map(group => (
                       <option value={group.id} key={group.id}>{group.name}</option>
                     ))
                   }
@@ -53,4 +53,4 @@ export const FilterForm: FC<FormikConfig<Partial<FilterFormValues>>> = ({ onSubm
       }
     </Formik>
   )
-}
+})

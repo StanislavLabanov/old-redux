@@ -4,26 +4,27 @@ import { useParams } from 'react-router-dom';
 import { GroupContactsCard } from 'src/components/GroupContactsCard';
 import { Empty } from 'src/components/Empty';
 import { ContactCard } from 'src/components/ContactCard';
-import { useAppSelector } from 'src/hooks/use-app-selector';
 import { ContactDto } from 'src/app/types/dto/ContactDto';
 import { GroupContactsDto } from 'src/app/types/dto/GroupContactsDto';
+import { store } from 'src/store';
+import { observer } from 'mobx-react-lite';
 
-export const GroupPage: FC = () => {
-  const { contacts: contactsMass, groupContacts: groupContactsMass } = useAppSelector(state => state.contacts)
+export const GroupPage: FC = observer(() => {
+  const { contacts, groupContacts } = store
   const { groupId } = useParams<{ groupId: string }>()
-  const [contacts, setContacts] = useState<ContactDto[]>([])
+  const [contactsState, setContactsState] = useState<ContactDto[]>([])
   const [group, setGroup] = useState<GroupContactsDto>();
 
   useEffect(() => {
-    const findGroup = groupContactsMass.find(({ id }) => id === groupId);
+    const findGroup = groupContacts.find(({ id }) => id === groupId);
     setGroup(findGroup);
-    setContacts(() => {
+    setContactsState(() => {
       if (findGroup) {
-        return contactsMass.filter(({ id }) => findGroup.contactIds.includes(id))
+        return contacts.filter(({ id }) => findGroup.contactIds.includes(id))
       }
       return [];
     });
-  }, [groupId, contactsMass, groupContactsMass]);
+  }, [groupId, contacts, groupContacts]);
 
   return (
     <Row className="g-4">
@@ -40,7 +41,7 @@ export const GroupPage: FC = () => {
             </Col>
             <Col>
               <Row xxl={4} className="g-4">
-                {contacts.map((contact) => (
+                {contactsState.map((contact) => (
                   <Col key={contact.id}>
                     <ContactCard contact={contact} withLink />
                   </Col>
@@ -52,4 +53,4 @@ export const GroupPage: FC = () => {
       }
     </Row>
   )
-}
+})

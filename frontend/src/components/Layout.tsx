@@ -3,12 +3,11 @@ import { Col, Container, Row } from 'react-bootstrap';
 import { MainMenu } from './MainMenu';
 import { Breadcrumbs } from 'src/components/Breadcrumbs';
 import { FC } from 'react';
+import { observer } from 'mobx-react-lite';
+import { store } from 'src/store';
 
-interface Props {
-  loading: boolean
-}
-
-export const Layout: FC<Props> = ({ loading }) => {
+export const Layout: FC = observer(() => {
+  const { loadingContacts, loadingGroup } = store
   const location = useLocation();
   const pathNames = location.pathname.split('/').filter((x) => x);
 
@@ -22,7 +21,7 @@ export const Layout: FC<Props> = ({ loading }) => {
           <Breadcrumbs pathNames={pathNames} />
         </Col>
         <Col xxl={12}>
-          {loading ? <div>Loading...</div> : <Outlet />}
+          {loadingContacts || loadingGroup ? <div>Loading...</div> : <Outlet />}
         </Col>
         <Col xxl={12}>
           <footer>
@@ -32,4 +31,4 @@ export const Layout: FC<Props> = ({ loading }) => {
       </Row>
     </Container>
   );
-}
+})
